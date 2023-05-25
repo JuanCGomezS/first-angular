@@ -29,7 +29,7 @@ export class AdministradorUsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUsers();
-  } //https://www.udemy.com/course/crud-angular-9-net-core-entity-framework-coresqlserver/learn/lecture/25274466#announcements
+  }
 
 
   getUsers() {
