@@ -13,6 +13,7 @@ export class AdministradorUsuarioComponent implements OnInit {
   public accion = 'Agregar';
   public form: FormGroup;
   public id: number | undefined;
+  public debug = false;
 
   constructor(
     private fb: FormBuilder,
@@ -34,11 +35,11 @@ export class AdministradorUsuarioComponent implements OnInit {
 
   getUsers() {
     this._usuarioService.getListUsuarios().subscribe((result: any) => {
-      console.log(result);
+      if (this.debug) console.log(result);
       this.listUsuarios = result;
     }, error => {
       this.toastr.error(`Se ha presentado un error`, '¡¡ERROR!!')
-      console.log(error);
+      console.error(error);
     })
   }
 
@@ -53,7 +54,7 @@ export class AdministradorUsuarioComponent implements OnInit {
     if (this.id) {
       usuario.id = this.id;
       this._usuarioService.updateUser(this.id, usuario).subscribe(data => {
-        console.log(data);
+        if (this.debug) console.log(data);
         
         this.toastr.success(`El usuario ${usuario.nombre_u} fue actualizado con exito`, 'Usuario actualizado');
         this.accion = 'Agregar';
@@ -62,38 +63,37 @@ export class AdministradorUsuarioComponent implements OnInit {
         this.getUsers();
       }, error => {
         this.toastr.error(`Se ha presentado un error`, '¡¡ERROR!!')
-        console.log(error);
+        console.error(error);
       })
 
     } else {
       this._usuarioService.saveUser(usuario).subscribe(data => {
-        console.log(data);
+        if (this.debug) console.log(data);
 
         this.toastr.success(`El usuario ${usuario.nombre_u} fue agregado con exito`, 'Usuario agregado');
         this.form.reset();
         this.getUsers();
       }, error => {
         this.toastr.error(`Se ha presentado un error`, '¡¡ERROR!!')
-        console.log(error);
+        console.error(error);
       })
     }
   }
 
   eliminarUsuario(id: number) {
     this._usuarioService.deleteUser(id).subscribe(data => {
-      console.log(data);
-
-      this.toastr.error(`El Usuario fue eliminado con exito`, 'Usuario eliminado')
+      this.toastr.warning(`El Usuario fue eliminado con exito`, 'Usuario eliminado')
       this.getUsers();
     }, error => {
       this.toastr.error(`Se ha presentado un error`, '¡¡ERROR!!')
-      console.log(error);
+      console.error(error);
     });
   }
 
   editarUsuario(usuario: any) {
     this.accion = 'Editar';
-    this.id = usuario.id;
+    this.id = usuario?.id_u || usuario?.id;
+    if (this.debug) console.log(this.id);
 
     this.form.patchValue({
       nombre: usuario.nombre_u,

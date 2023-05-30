@@ -77,7 +77,7 @@
                                             <i (click)="editarUsuario(usuario)" class="far fa-edit text-info"></i>
                                         </td>
                                         <td>
-                                            <i (click)="eliminarUsuario(usuario.id)"
+                                            <i (click)="eliminarUsuario(usuario?.id_u || usuario.id)"
                                                 class="far fa-trash-alt text-danger"></i>
                                         </td>
                                     </tr>
