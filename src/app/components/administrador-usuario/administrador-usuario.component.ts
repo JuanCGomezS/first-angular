@@ -52,7 +52,7 @@ export class AdministradorUsuarioComponent implements OnInit {
     }
 
     if (this.id) {
-      usuario.id = this.id;
+      usuario.id_u = this.id;
       this._usuarioService.updateUser(this.id, usuario).subscribe(data => {
         if (this.debug) console.log(data);
         
