@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UsuarioService {
   private net = false;
+  private spring_boot = false;
   private debug = false;
   private myAppUrl = '';
   private myApiUrl = `api/usuario/`;
@@ -14,30 +15,50 @@ export class UsuarioService {
   constructor(
     private http: HttpClient
   ) {
-    if (this.net) {
-      this.myAppUrl = `https://localhost:7148/`;
-    } else {
-      this.myAppUrl = ``;
+
+    switch (true) {
+      case this.net:
+        this.myAppUrl = `https://localhost:7148/`;
+        console.warn('BACKEND IN .NET V.6');        
+        break;
+
+      case this.spring_boot:
+        this.myAppUrl = `http://localhost:8080/`;
+        console.warn('BACKEND IN SPRING BOOT JAVA.17');
+        break;
+
+      default:
+        this.myAppUrl = ``;
+        console.warn('BACKEND IN NODE JS V.20.0.0');
+        break;
     }
   }
 
   getListUsuarios(): Observable<any> {
-    if (this.debug) console.log(`${this.myAppUrl}${this.myApiUrl}`);
-    return this.http.get(`${this.myAppUrl}${this.myApiUrl}`)
+    const url = `${this.myAppUrl}${this.myApiUrl}${this.spring_boot ? 'list' : ''}`;
+    if (this.debug) console.log(url);
+
+    return this.http.get(url);
   }
 
   deleteUser(id: number): Observable<any> {
-    if (this.debug) console.log(`${this.myAppUrl}${this.myApiUrl}${id}`);
-    return this.http.delete(`${this.myAppUrl}${this.myApiUrl}${id}`)
+    const url = `${this.myAppUrl}${this.myApiUrl}${id}`;
+    if (this.debug) console.log(url);
+
+    return this.spring_boot ? this.http.post(url, '') : this.http.delete(url);
   }
 
   saveUser(user: any): Observable<any> {
-    if (this.debug) console.log(`${this.myAppUrl}${this.myApiUrl}`, user);
-    return this.http.post(`${this.myAppUrl}${this.myApiUrl}`, user)
+    const url = `${this.myAppUrl}${this.myApiUrl}${this.spring_boot ? 'new' : ''}`;
+    if (this.debug) console.log(url, user);
+
+    return this.http.post(url, user);
   }
 
   updateUser(id: number, user: any): Observable<any> {
-    if (this.debug) console.log(`${this.myAppUrl}${this.myApiUrl}${id}`, user);
-    return this.http.put(`${this.myAppUrl}${this.myApiUrl}${id}`, user)
+    const url = `${this.myAppUrl}${this.myApiUrl}${this.spring_boot ? 'update' : id}`;
+    if (this.debug) console.log(url, user);
+
+    return this.spring_boot ? this.http.post(url, user) : this.http.put(url, user);
   }
 }
